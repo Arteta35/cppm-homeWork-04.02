@@ -47,8 +47,8 @@ public:
 	{
 		
 
-		for (int i = 0; i < 3; i++)
-			for (int j = i; j < 3; j++)
+		for (int i = 0; i < arr.length(); i++)
+			for (int j = i; j < arr.length(); j++)
 				if (arr[i] > arr[j])
 				{
 					auto buf = arr[i];
