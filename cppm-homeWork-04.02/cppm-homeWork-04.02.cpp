@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <Windows.h>
 
 using namespace std;
 
@@ -9,50 +10,46 @@ class Adresses
 {
 public:
 
-	std::string read_to_file(int N, std::ifstream& fin)
-	{
-
-		fin >> Adresses::city;
-		fin >> Adresses::street;
-		fin >> Adresses::num_house;
-		fin >> Adresses::num_kv;
-
-		string num_house1 = to_string(num_house);
-		string num_kv1 = to_string(num_kv);
-
-		string adres = city + ", " + street + ", " + num_house1 + ", " + num_kv1;
-
-		return adres;
+	void in_city(string city) {
+		this->city = city;
 	}
 
-	void write_to_file(int N, std::ofstream& fout, string arr)
-	{
-
-		for (int j = N - 1; j >= 0; j--) {
-
-			fout << arr[j] << std::endl;
-		}
-
-
+	void in_street(string street) {
+		this->street = street;
 	}
 
-	string* create_array(int rows) {
-
-		string* arr = new string [rows]();
-
-		return arr;
+	void in_num_house(int num_house) {
+		this->num_house = num_house;
 	}
 
-	void sort(string arr)
+	void in_num_kv(int num_kv) {
+		this->num_kv = num_kv;
+	}
+
+	string get_output() {
+		return city + ", " + street + ", " + to_string(num_house) + ", " + to_string(num_kv);
+	}
+
+	void sort(Adresses* arr, int N)
 	{
-		for (int i = 0; i < arr.length(); i++)
-			for (int j = i; j < arr.length(); j++)
-				if (arr[i] > arr[j])
+		bool flag = false;
+		do
+		{
+			flag = false;
+			for (int i = 0; i < N - 1; i++) {
+
+				char a = arr[i].get_output()[0];
+				char b = arr[i + 1].get_output()[0];
+
+				if (a > b)
 				{
-					auto buf = arr[i];
-					arr[i] = arr[j];
-					arr[j] = buf;
+					Adresses buf = arr[i];
+					arr[i] = arr[i + 1];
+					arr[i + 1] = buf;
+					flag = true;
 				}
+			}
+		} while (flag);
 	};
 
 	int setter(int N) {
@@ -63,7 +60,7 @@ public:
 
 		}
 		else {
-			std::cout << "Размерность некоректна!";
+			cout << "Размерность некоректна!";
 			return -1;
 
 		}
@@ -74,8 +71,8 @@ public:
 private:
 
 	int N = 0;
-	std::string city = "Неизвестно";
-	std::string street = "Неизвестно";
+	string city = "Неизвестно";
+	string street = "Неизвестно";
 	int num_house = 0;
 	int num_kv = 0;
 
@@ -84,36 +81,45 @@ private:
 
 int main()
 {
+	setlocale(LC_ALL, "Russian");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
 	Adresses adres;
 
 	int N;
+	string city = "Неизвестно";
+	string street = "Неизвестно";
+	int num_house = 0;
+	int num_kv;
 
-	std::ifstream fin("in.txt");
-	std::ofstream fout("out.txt");
+	ifstream fin("in.txt");
+	ofstream fout("out.txt");
 
 	if (fin.is_open() && fout.is_open()) {
 
 		fin >> N;
 		fout << N << std::endl;
-		std::string adress;
+		string adress;
 		N = adres.setter(N);
-
-		string* arr = adres.create_array(N);
-		
-		
+		Adresses* arr = new Adresses[N]();
 
 		for (int i = 0; i < N; i++)
 		{
-			adress = adres.read_to_file(N, fin);
-			arr[i] = adress;
+			fin >> city;
+			arr[i].in_city(city);
+			fin >> street;
+			arr[i].in_street(street);
+			fin >> num_house;
+			arr[i].in_num_house(num_house);
+			fin >> num_kv;
+			arr[i].in_num_kv(num_kv);
 
 		}
 
-		adres.sort(*arr);
+		adres.sort(arr, N);
 
-		//adres.write_to_file(N, fout, *arr);
-
-		for (int j = N - 1; j >= 0; j--) { fout << arr[j] << std::endl; }
+		for (int j = 0; j < N; j++) { fout << arr[j].get_output() << std::endl; }
 
 		delete[] arr;
 
