@@ -30,6 +30,10 @@ public:
 		return city + ", " + street + ", " + to_string(num_house) + ", " + to_string(num_kv);
 	}
 
+	string out_city() {
+		return city;
+	}
+
 
 
 private:
@@ -41,72 +45,24 @@ private:
 
 };
 
-string city2(Adresses* arr, int i) {
-
-	string a = arr[i].get_output();
-	auto del = a.find(",");
-	int del1 = static_cast<int>(del);
-
-	string city1 = a.substr(0, del1);
-
-	return city1;
-
-};
-
 void sort(Adresses* arr, int N)
 {
 	bool flag = false;
 	do
 	{
-		
 		flag = false;
 
 		for (int i = 0; i < N - 1; i++) {
 
-			string a = city2(arr, i);
-			string b = city2(arr, i + 1);
+			int res = arr[i].out_city().compare(arr[i + 1].out_city());
 
-			auto len1 = a.length();
-			auto len2 = b.length();
-
-			int len11 = static_cast<int>(len1);
-			int len22 = static_cast<int>(len2);
-
-			if (a[0] > b[0]) {
-				Adresses buf = arr[i];
-				arr[i] = arr[i + 1];
-				arr[i + 1] = buf;
+			if (res == 0) {
+				continue;
+			} if (res < 0) {
+				Adresses buf = arr[i + 1];
+				arr[i+1] = arr[i];
+				arr[i] = buf;
 				flag = true;
-
-			}
-			if (a[0] == b[0]) {
-
-				if (len11 >= len22) {
-
-					for (int j = 0; j < len11 - 1; j++) {
-						if (a[j] > b[j])
-						{
-							Adresses buf = arr[i];
-							arr[i] = arr[i + 1];
-							arr[i + 1] = buf;
-							break;
-						}
-					}
-
-				}
-				else {
-					for (int j = 0; j < len22 - 1; j++) {
-						if (a[j] > b[j])
-						{
-							Adresses buf = arr[i];
-							arr[i] = arr[i + 1];
-							arr[i + 1] = buf;
-							break;
-						}
-					}
-
-				}
-
 			}
 
 		}
@@ -134,14 +90,11 @@ int main()
 	if (fin.is_open() && fout.is_open()) {
 
 		fin >> N;
-		if (N > 0) {
-			N = N;
-		}
-		else {
+		if (N <= 0) {
 			cout << "Размерность некоректна!";
 			return -1;
-
 		}
+		
 		fout << N << std::endl;
 		Adresses* arr = new Adresses[N]();
 
@@ -160,7 +113,7 @@ int main()
 		
 		sort(arr, N);
 
-		for (int j = 0; j < N; j++) { fout << arr[j].get_output() << std::endl; }
+		for (int j = N-1; j >= 0; j--) { fout << arr[j].get_output() << std::endl; }
 
 		delete[] arr;
 
